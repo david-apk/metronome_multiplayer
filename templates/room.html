@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ room_name }} - {{ opener }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href='/static/main.css' />
+</head>
+
+<div>
+
+<body style="background-color: #8E8E8E;">
+
+
+<div class="container" >
+   
+   <br> <div class="row main-shine" style="background-color: rgb(220, 220, 220); color: rgb(101, 106, 120); padding: 2vh; border-radius: 2vh;">
+    <div class="col-sm">
+    <h1>
+       <b>{{ room_name }} </b>
+    </h1> 
+    </div>
+
+    <div class="col-sm "> 
+        <select id="Composition" class="form-control mt-2"
+                onChange="metronomeApp.setSound(this.selectedIndex + 1)">
+         </select>
+    </div>
+    
+    <div class="col-sm "> 
+        
+    </div>
+</div>
+
+        <span id="bpm_from_server"></span>&nbsp;&nbsp;<b><span id="time_next_sound_from_server"></span></b>
+        <div class="row main-shine" style="background-color: rgb(220, 220, 220); color: rgb(101, 106, 120); text-align: center; border-radius: 2vh; ">
+            <div class="col-sm">
+                <h2>
+                   <b>Settings </b>
+                </h2> 
+                </div>
+        </div>
+    <div class="row main-shine" style="background-color: rgb(220, 220, 220); color: rgb(101, 106, 120); padding: 2vh; border-radius: 2vh;">
+       
+        
+        <div class="col-sm text-center" >
+            
+            <div class="form-group p-3 border-round-form" style=" background-color: rgb(234, 234, 234);" >
+                <label for="Calibration"> Calibration </label>
+                <div class="form-group text-center">
+                    <b ><span  id="handle_move" style="font-size:medium ;" ></span></b>
+                    <input id="handle_move_bot" class="form-control btn btn-secondary"
+                       type="button" value="Tap to calibration" onclick="handle_move()"/>
+                   
+
+                        <input id="start_after_tapping" class="form-control btn btn-secondary mt-2" style="background-color:rgb(52, 132, 84); color:white;"
+                        type="button" value="Start after tapping" onclick="start_after_tapping_func()"/>
+                    </div>
+
+                <div class="col-sm text-center mt-4"  >
+                    <label for="indent_next_beat">Indent next beat</label>
+                    
+                        <div class="row">
+                            <input id="indent_next_beat_minus_1" style=" width: 25%;" class="form-control btn btn-secondary" type="button" value=" -1 " onclick="indent_next_beat_minus_1()"/>
+                            <b style=" width: 50%;" ><span  id="indent_next_beat_vis" style="font-size:medium ;" ></span></b>
+                            <input id="indent_next_beat_plus_1" style=" width: 25%;" class="form-control btn btn-secondary" type="button" value=" +1 " onclick="indent_next_beat_plus_1()"/>
+                        </div>
+                        <div class="row">
+                        <input id="take_indent_from_mic" class="form-control btn btn-secondary mt-2"
+                        type="button" value="Take indent from mic." onclick="take_any_from_mic('take_indent_from_mic')"/>
+                        <main></main>
+                        <input id="start_after_analisis" class="form-control btn btn-secondary mt-2" style="background-color:rgb(52, 132, 84); color:white;"
+                        type="button" value="Start after analisis" onclick="start_after_analisis_func()"/>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="form-group p-3 border-round-form text-center " style=" background-color: rgb(234, 234, 234);" >
+                <div class="col-sm text-center"  >
+                    <label for="tempo">Mic. analysis freq. </label>
+                        <div class="row">
+                            <input id="freq_mic_analis_low" style=" width: 33%;" class="form-control btn btn-secondary text-center " type="button" value="Low" onclick="freq_mic_analis_low()"/>
+                            <input id="freq_mic_analis_mid" style=" width: 33%;" class="form-control btn btn-secondary text-center" type="button" value="Mid" onclick="freq_mic_analis_mid()"/>
+                            <input id="freq_mic_analis_top" style=" width: 33%;" class="form-control btn btn-secondary text-center" type="button" value="Top" onclick="freq_mic_analis_top()"/>
+                        </div>
+                        <b><span id="mic_analis" style="font-size: smaller;"></span></b>
+
+
+                        <div class="mt-4">
+                        <label for="tempo" >Mic. analysis threshold </label>
+                        <div class="row">
+                            <input id="sens_mic_analis_minus" style=" width: 25%;" class="form-control btn btn-secondary" type="button" value=" -1 " onclick="sens_mic_analis_minus()"/>
+                            <b style=" width: 50%; margin-top: -0.6em;" > <span  id="sens_mic_analis" style="font-size:medium ;" > ● ● ● ● ●<br> ○ ○ ○ ○ ○ </span></b>
+                            <input id="sens_mic_analis_plus" style=" width: 25%;" class="form-control btn btn-secondary" type="button" value=" +1 " onclick="sens_mic_analis_plus()"/>
+                        </div></div>
+
+                        
+                </div>
+                
+
+                
+            </div>
+
+            
+        </div>
+
+        <div class="col-sm" >
+            
+
+            <div class="form-group p-3 border-round-form text-center " style=" background-color: rgb(234, 234, 234);" >
+                <label for="tempo">Player</label>
+                <input id="metronome" class="form-control btn btn-secondary"
+                   type="button" value="{{ start_word }}" onclick="metronomeApp.toggle()"/>
+
+                   <input id="mute_for_me" class="form-control btn btn-secondary mt-2"
+                   type="button" value="Mute for me" onclick="mute_for_me_func()"/>
+                </div>
+                <div class="form-group p-3 border-round-form text-center " style=" background-color: rgb(234, 234, 234);" >
+                <div class="row-sm"  >
+                <div class="col-sm text-center "  >
+                    <label for="tempo" id="iter_num" >Beat number </label>
+                        <div class="row">
+                            <input id="iter_room_minus" style=" width: 25%;" class="form-control btn btn-secondary text-center " type="button" value=" -1 " onclick="iter_room_minus()"/>
+                            <input style=" width: 50%;" class='form-control  text-center' type="number" value='0' min='0'  onChange="setTempoIterNum(this.value)">
+                            <input id="iter_room_plus" style=" width: 25%;" class="form-control btn btn-secondary text-center " type="button" value=" +1 " onclick="iter_room_plus()"/>
+                        </div>
+                </div>
+                
+                <div class="col-sm text-center mt-3"  >
+                    <label for="tempo">BPM </label>
+                        <div class="row">
+                            <input id="bpm_minus_1" style=" width: 25%;" class="form-control btn btn-secondary text-center " type="button" value=" -1 " onclick="bpm_minus_1(1)"/>
+                            <input id="tempo" style=" width: 50%;" class='form-control  text-center' type="number" value='130' min='20' max='9999' onChange="metronomeApp.setTempo(this.value);">
+                            <input id="bpm_plus_1" style=" width: 25%;" class="form-control btn btn-secondary text-center " type="button" value=" +1 " onclick="bpm_plus_1(1)"/>
+                        </div>
+                        <div class="row">
+                            <input id="bpm_minus_20" style=" width: 25%;" class="form-control btn btn-secondary text-center " type="button" value="-20" onclick="bpm_minus_1(20)"/>
+                            <input id="bpm_minus_5" style=" width: 25%;" class="form-control btn btn-secondary text-center" type="button" value="-5" onclick="bpm_minus_1(5)"/>
+                            <input id="bpm_plus_5" style=" width: 25%;" class="form-control btn btn-secondary text-center" type="button" value="+5" onclick="bpm_plus_1(5)"/>
+                            <input id="bpm_plus_20" style=" width: 25%;" class="form-control btn btn-secondary text-center" type="button" value="+20" onclick="bpm_plus_1(20)"/>
+                        </div>
+                       
+                </div>
+
+                <div class="col-sm text-center mt-3"  >
+                    <div class="row">
+                        <input id="tempo_X1" style=" width: 33%;" class="form-control btn btn-secondary text-center " type="button" value="X1" onclick="freq_mic_analis_low()"/>
+                        <input id="tempo_X2" style=" width: 33%;" class="form-control btn btn-secondary text-center" type="button" value="X2" onclick="freq_mic_analis_mid()"/>
+                        <input id="tempo_X3" style=" width: 33%;" class="form-control btn btn-secondary text-center" type="button" value="X3" onclick="freq_mic_analis_top()"/>
+                    </div>
+                </div>
+
+                
+
+                    <input id="set_tempo_bot" class="form-control btn-sm btn-secondary mt-3"
+                        type="button" value="Take BPM from tap" onclick="feel_bpm()"/>
+
+                        <input  id="take_bpm_from_mic" class="form-control btn-sm btn-secondary mt-2"
+                        type="button" value="Take BPM from mic." onclick="take_any_from_mic('take_bpm_from_mic')"/>
+
+                        <input style="background-color: rgba(198, 203, 213, 0.674); border-width: 0px;" id="share_tempo_bot" class="form-control btn-sm btn-secondary mt-2"
+                        type="button" value="Share BPM" onclick="share_temp()"/>
+
+            </div>
+            
+
+                
+            </div>
+            
+            
+            
+        </div>
+        
+        <div  class="col-sm text-center"  >
+            <div id='visualization' class="form-group p-3 border-round-form" style=" background-color: rgb(255, 255, 255); height: 13em; opacity: 0;" >
+
+                
+
+            </div>
+
+            <div class="form-group p-3 border-round-form text-center " style=" background-color: rgb(234, 234, 234);" >
+                <label for="visType">Visualization</label>
+                <select id="visType" class="form-control"
+                        onChange="metronomeApp.setVisualization(this.selectedIndex)">
+                </select>
+           
+        </div>
+
+            <div class="form-group p-3 border-round-form text-center " style=" background-color: rgb(234, 234, 234);" >
+                    <label for="metroSound">Sound</label>
+                    <select id="metroSound" class="form-control"
+                            onChange="metronomeApp.setSound(this.selectedIndex + 1)">
+                    </select>
+               
+            </div>
+
+
+        
+            <div class="form-group p-3 border-round-form" style=" background-color: rgb(234, 234, 234);" >
+                <div class="row-sm"  >
+                    <label for="musicians_list"> Members </label>
+                    <div class="row text-left ">
+                        <div id="musicians_list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src='/static/js/main_room.js' ></script>
+<script src='/static/js/getData.js' ></script>
+<script src='/static/js/take_indent_from_mic.js' ></script>
+<script src='/static/js/freq_mic_analis.js' ></script>
+
+<script>
+
+
+
+
+document.body.animate([{
+        background: "#8E8E8E"
+    }, {
+        background: "#B1B1B1"
+    }, ], {
+        duration: 3900,
+        delay: 3300,
+        iterations: 1,
+        fill: 'forwards'
+    });
+
+
+
+
+    class SoundFiles {
+    constructor(context, urlList) {
+        this.buffers = [];
+        const self = this;
+
+        urlList.forEach((url, index) => {
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = "arraybuffer";
+            xhr.onload = () => context.decodeAudioData(xhr.response,
+                (buffer) => self.buffers[index] = buffer,
+                (error) => console.error('decodeAudioData error', error));
+            xhr.open("GET", url);
+            xhr.send();
+        });
+    }
+}
+
+
+     class MetronomeSound {
+    constructor(soundsPath, sounds, listener) {
+        this.soundsPath = soundsPath;
+        const dummyListener = { setTempo: (t) => {}, setStartTime: (t) => {} };
+        this.listener = listener || dummyListener;
+        this.running = false;
+        this.tempoBpm = 260*2;
+        this.soundNum = 1;
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const urls = sounds.map(name => this.soundsPath + name);
+        this.soundFiles = new SoundFiles(this.audioContext, urls);
+    }
+
+    /**
+     * Sets the tempo.
+     * @param bpm tempo in beats per minute
+     */
+    setTempo(bpm) {
+        this.tempoBpm = bpm;
+        
+    }
+
+    /**
+     * Sets the metronome sound.
+     * @param number the one-based sound index
+     */
+    setSound(number) {
+        this.soundNum = number;
+    }
+
+    /** Toggles the running state of the metronome */
+    toggle() {
+
+        if (room_activation == "run") {
+            room_activation = "runing_now";
+        }
+
+        
+
+        
+        const ms = this;
+
+        function playMetronome() {
+
+            
+            
+            
+
+            let nextStart = ms.audioContext.currentTime;
+            console.log("ms.audioContext.currentTime = ",ms.audioContext.currentTime)
+
+            
+
+            
+
+            function schedule() {
+                if (!ms.running) return;
+
+                ms.listener.setStartTime(nextStart);
+                ms.listener.setTempo(ms.tempoBpm);
+
+                
+
+                var bufIndex = ms.soundNum - 1;
+                if (bufIndex >= ms.soundFiles.buffers.length) {
+                    alert('Sound files are not yet loaded')
+                } else if (ms.tempoBpm) {
+
+                    
+
+                                                         
+
+                    
+
+                    // записываем номер удара
+                    var new_iter_num = iter_num+1;
+                    iter_num = new_iter_num;
+                    $('#iter_num').html(iter_num.toString()); // менять номер удара
+                    console.log("now_iter = ",iter_num);
+
+                    if (mute_for_me == true) {
+                        bufIndex = 6;
+                        
+                    }
+
+                    nextStart += 60 / ms.tempoBpm;
+                    ms.source = ms.audioContext.createBufferSource();
+
+                    ms.source.buffer = ms.soundFiles.buffers[bufIndex];
+                   
+                    ms.source.connect(ms.audioContext.destination);
+                    ms.source.onended = schedule;
+
+                    console.log("ms.source = ", ms.source)
+
+                    
+                    if (secondary_beat_running==false) {
+                        secondary_beat_running = true;
+                        console.log("-- SPESIAL ___ gogog")
+                        
+                        setTimeout(function(){ console.log("1")}, ((60000/bpm_global)/2)*0.9);
+                    } 
+
+                    ms.source.start(nextStart);
+
+                    
+
+                    
+
+                    // если в этой итерации мы нажимали на кнопку подвинуть бит вперед или назад
+                    if (indent_next_beat != 0) {
+                        // забываем дополнительные задержки или ускорения
+                        indent_next_beat = 0;
+                        $('#indent_next_beat_vis').html("○ ○ ○ ○ ○ ");
+                        // выравниваем бит до обычного
+                        bpm_global = previous_bpm_global;
+                        // очищаем резервное хранилище бита, которое используется пока мы меняем настоящий
+                        previous_bpm_global= -1;
+                        $('#tempo').val(bpm_global.toString());
+                        metronomeApp.setTempo(bpm_global);
+                    }
+                }
+            }
+            
+
+            schedule();
+
+            
+        }
+        
+
+        if (this.running = !this.running) {
+            playMetronome();
+        } else {
+            this.listener.setTempo(0);
+            if (this.source) {
+                this.source.disconnect();
+                this.source = undefined;
+            }
+        }
+    }
+}
+
+
+
+class MetronomeApp {
+    /**
+     * Creates a MetronomeApp.
+     * @param soundsPath the path used to fetch the sound files
+     * @param sounds an array of sound file names
+     * @param visSettings settings for the visualizer
+     * @param soundSelectId the ID of the HTML select control for the sounds
+     * @param visTypeSelectId the ID of the HTML select control for the visualization types
+     * @param startStopId the ID of the HTML button to start and stop the metronome
+     */
+    constructor(soundsPath, sounds, visSettings, soundSelectId, visTypeSelectId, startStopId) {
+        this.visSettings = visSettings;
+        this.soundSelectId = soundSelectId || 'metroSound';
+        this.visTypeSelectId = visTypeSelectId || 'visType';
+        this.startStopId = startStopId || 'metronome';
+
+        const metroSoundListener = {
+            setTempo: (t) => visSettings.tempoBpm = t,
+            setStartTime: (t) => visSettings.startTime = t
+        };
+        this.metroSound = new MetronomeSound(soundsPath, sounds, metroSoundListener);
+
+        visSettings.getTime = () => this.metroSound.audioContext.currentTime;
+
+        const soundSelect = $('#' + this.soundSelectId);
+        for (const name of sounds) {
+            const fileExtension = /\..*/;
+            const optionText = name.replace('_', ' ').replace(fileExtension, '');
+            soundSelect.append(`<option>${optionText}</option>`);
+        }
+
+        const visTypeSelect = $('#' + this.visTypeSelectId);
+        visTypeSelect.append('<option>None</option>');
+        visSettings.names.map((visTypeName, index) => {
+            const sel = index === 0 ? ' selected' : '';
+            visTypeSelect.append(`<option${sel}>${visTypeName}</option>`);
+        });
+    }
+
+    /**
+     * Sets the tempo.
+     * @param bpm tempo in beats per minute
+     */
+    setTempo(bpm) {
+        this.metroSound.setTempo(bpm*4);
+        bpm_global= bpm;
+    }
+
+    /**
+     * Sets the metronome sound.
+     * @param number the one-based sound index
+     */
+    setSound(number) {
+        this.metroSound.setSound(number);
+    }
+
+    /**
+     * Sets the visualization type.
+     * @param index a 0-based number specifying the visualization to use
+     */
+    setVisualization(index) {
+        this.visSettings.visualizationType = index;
+    }
+
+    /** Starts the metronome if it is stopped, and vice versa. */
+    toggle() {
+
+        
+
+        if ('{{ opener_role }}' == "admin") {
+            //this.metroSound.toggle();
+
+            if (room_activation != "run" && room_activation != "runing_now" ) {
+                if (document.getElementById("metronome").value != '{{ stop_word }}') {
+                    document.getElementById("metronome").value = '{{ stop_word }}';
+                    setInterval('getData("{{ room_name }}", "{{ opener }}", "{{ start_word }}", "{{ opener_role }}", "{{ administrator_name }}" )',600);
+                } else {
+                    document.getElementById("metronome").value = '{{ start_word }}';
+                }
+            } 
+            if (room_activation == "run") {
+                this.metroSound.toggle();
+            }
+
+            //$('#' + this.startStopId).val(this.metroSound.running ? '{{ stop_word }}' : '{{ start_word }}')
+        };
+
+        if ('{{ opener_role }}' != "admin") {
+
+            if (room_activation != "run"  && room_activation != "runing_now") {
+                if (document.getElementById("metronome").value != '{{ stop_word }}') {
+                    document.getElementById("metronome").value = '{{ stop_word }} {{ administrator_name }}';
+
+                    document.getElementById("metronome").animate([{
+                                    background: "rgb(52, 132, 84)",
+                                    color: "white"
+                                }, {
+                                    background: "rgb(136, 141, 152)",
+                                    color: "white" 
+                                },
+                                {
+                                    background: "rgb(52, 132, 84)",
+                                    color: "white"
+                                }, ], {
+                                    duration: 1300,
+                                    delay: 0,
+                                    iterations: "Infinity",
+                                    fill: 'forwards'
+                                });
+
+                    setInterval('getData("{{ room_name }}", "{{ opener }}", "{{ start_word }}", "{{ opener_role }}", "{{ administrator_name }}")',600);
+                } else {
+                    document.getElementById("metronome").value = '{{ start_word }}';
+                }
+            }
+            if (room_activation == "run") {
+                this.metroSound.toggle();
+            }
+        };
+    }
+}
+
+const VisSettings = {
+    tempoBpm: 0,
+    startTime: 0,
+    getTime: undefined,
+    visualizationType: 0,
+    names: ['Spinning Circle', 'Circle']
+};
+
+const metronomeApp = new MetronomeApp('assets/audio/',
+    ['High_Woodblock.wav', 'Low_Woodblock.wav', 'High_Bongo.wav',
+        'Low_Bongo.wav', 'Claves.wav', 'Drumsticks.wav', 'Silence.mp3'],
+    VisSettings);
+
+    /** This p5.js sketch makes a visualization of the metronome beats */
+
+
+
+function setup() {
+    const vis = $("#visualization");
+    createCanvas(vis.width(), vis.height()).parent("visualization");
+    colorMode(HSB);
+}
+
+function draw() {
+
+
+    function calcOffsetFraction() {
+        if (VisSettings.visualizationType == 0) {
+            var el = document.getElementById('visualization');
+                el.style = "width: 0px;height: 0px; padding:0px; "
+                el.className = "border-round-form"
+
+                var el = document.getElementById('defaultCanvas0');
+                el.style = "width: 0px;height: 0px; padding:0px;"
+        } else {
+            var el = document.getElementById('visualization');
+                el.style = "width: 100%;height: 40%; background-color: white; "
+                el.className = "form-group p-3 border-round-form"
+
+                var el = document.getElementById('defaultCanvas0');
+                el.style = "width: 100%;height: 100%; "
+        }
+        const secondsPerMinute = 60;
+        const periodSeconds = secondsPerMinute / VisSettings.tempoBpm;
+        const secondsSinceStart = VisSettings.getTime() - VisSettings.startTime;
+        const offsetSeconds = secondsSinceStart % periodSeconds;
+        return offsetSeconds / periodSeconds;
+    }
+
+    const offsetFraction = calcOffsetFraction();
+
+    const margin = 40;
+    const radius = min(width, height) / 2;
+    const diameter = radius * 2;
+
+    background(220);
+
+    function drawLargeCircle() {
+        strokeWeight(20);
+        const greenHue = 240;
+        const minimumBrightness = 0;
+        fill(greenHue, 100, map(offsetFraction, 0, 1, 100, minimumBrightness));
+        ellipse(width / 2, height / 2, diameter - margin, diameter - margin);
+    }
+
+    const visualizations = [
+        () => {},
+        () => {
+            function drawSpoke() {
+                translate(width / 2, height / 2);
+                rotate(map(offsetFraction, 0, 1, 0, TWO_PI) - HALF_PI);
+                strokeWeight(8);
+                line(0, 0, radius - margin / 2, 0);
+            }
+
+            function drawSmallCircle() {
+                translate(radius - margin / 2, 0);
+                strokeWeight(3);
+                fill(220);
+                ellipse(0, 0, 30, 30);
+            }
+
+            drawLargeCircle();
+            drawSpoke();
+            drawSmallCircle();
+        },
+        () => drawLargeCircle()
+    ];
+
+    visualizations[(VisSettings.visualizationType)]();
+}
+
+document.getElementById("visualization").animate([{
+        opacity: "0"
+    }, {
+        opacity: "100"
+    }, ], {
+        duration: 900,
+        delay:00,
+        iterations: 1,
+        fill: 'forwards'
+    });
+setInterval('musicians_list("{{ room_name }}","{{ opener }}")',900); 
+
+document.getElementById("visType").selectedIndex =0;
+
+
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href='/static/main.css' />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+</head>
+
+<body>
+    
+    <div class = "main main-shine">
+        <a href="/"  class ="little-str-bot" >Назад</a>
+        <br>
+        <h2>Заполните все поля</h2>
+
+        <form method="post">
+            <fieldset class="border-round-form">
+                <legend></legend>
+                <p><label for="name_reg">Имя&nbsp; &nbsp; &nbsp; &nbsp;</label><input  class ="input-little"  type="text" id="name" name="name_reg"></p>
+                <p><label for="password_reg">Пароль &nbsp;</label><input  class ="input-little"  type="password" id="password" name="password_reg"></p>
+            </fieldset>
+            <p class ="error-mes">{{ error_message }}</p><br>
+
+            <p ><input type="submit" class ="green-bot" value="Создать аккаунт"></p>
+        
+        </form>
+    </div>
+</body>
+</html>

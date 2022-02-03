@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Metronome</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<div>
+  
+<div class="container">
+    
+    <h1>Metronome</h1>
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                <label for="tempo">Tempo</label>
+                <input id="tempo" class='form-control' type="number" value='60'
+                min='20' max='180' onChange="metronomeApp.setTempo(this.value);">
+            </div>
+            <div class="form-group">
+                <label for="metroSound">Sound</label>
+                <select id="metroSound" class="form-control"
+                        onChange="metronomeApp.setSound(this.selectedIndex + 1)">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="visType">Visualization</label>
+                <select id="visType" class="form-control"
+                        onChange="metronomeApp.setVisualization(this.selectedIndex)">
+                </select>
+            </div>
+            <input id="metronome" class="form-control btn btn-secondary"
+                   type="button" value="Start" onclick="metronomeApp.toggle()"/>
+        </div>
+        <div id='visualization' class="col-sm">
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>
+    class SoundFiles {
+    constructor(context, urlList) {
+        this.buffers = [];
+        const self = this;
+
+        urlList.forEach((url, index) => {
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = "arraybuffer";
+            xhr.onload = () => context.decodeAudioData(xhr.response,
+                (buffer) => self.buffers[index] = buffer,
+                (error) => console.error('decodeAudioData error', error));
+            xhr.open("GET", url);
+            xhr.send();
+        });
+    }
+}
+
+
+     class MetronomeSound {
+    constructor(soundsPath, sounds, listener) {
+        this.soundsPath = soundsPath;
+        const dummyListener = { setTempo: (t) => {}, setStartTime: (t) => {} };
+        this.listener = listener || dummyListener;
+        this.running = false;
+        this.tempoBpm = 60;
+        this.soundNum = 1;
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const urls = sounds.map(name => this.soundsPath + name);
+        this.soundFiles = new SoundFiles(this.audioContext, urls);
+    }
+
+    /**
+     * Sets the tempo.
+     * @param bpm tempo in beats per minute
+     */
+    setTempo(bpm) {
+        this.tempoBpm = bpm;
+    }
+
+    /**
+     * Sets the metronome sound.
+     * @param number the one-based sound index
+     */
+    setSound(number) {
+        this.soundNum = number;
+    }
+
+    /** Toggles the running state of the metronome */
+    toggle() {
+        const ms = this;
+
+        function playMetronome() {
+            let nextStart = ms.audioContext.currentTime;
+
+            function schedule() {
+                if (!ms.running) return;
+
+                ms.listener.setStartTime(nextStart);
+                ms.listener.setTempo(ms.tempoBpm);
+                const bufIndex = ms.soundNum - 1;
+                if (bufIndex >= ms.soundFiles.buffers.length) {
+                    alert('Sound files are not yet loaded')
+                } else if (ms.tempoBpm) {
+                    nextStart += 60 / ms.tempoBpm;
+                    ms.source = ms.audioContext.createBufferSource();
+                    ms.source.buffer = ms.soundFiles.buffers[bufIndex];
+                    ms.source.connect(ms.audioContext.destination);
+                    ms.source.onended = schedule;
+                    ms.source.start(nextStart);
+                }
+            }
+
+            schedule();
+        }
+
+        if (this.running = !this.running) {
+            playMetronome();
+        } else {
+            this.listener.setTempo(0);
+            if (this.source) {
+                this.source.disconnect();
+                this.source = undefined;
+            }
+        }
+    }
+}
+
+class MetronomeApp {
+    /**
+     * Creates a MetronomeApp.
+     * @param soundsPath the path used to fetch the sound files
+     * @param sounds an array of sound file names
+     * @param visSettings settings for the visualizer
+     * @param soundSelectId the ID of the HTML select control for the sounds
+     * @param visTypeSelectId the ID of the HTML select control for the visualization types
+     * @param startStopId the ID of the HTML button to start and stop the metronome
+     */
+    constructor(soundsPath, sounds, visSettings, soundSelectId, visTypeSelectId, startStopId) {
+        this.visSettings = visSettings;
+        this.soundSelectId = soundSelectId || 'metroSound';
+        this.visTypeSelectId = visTypeSelectId || 'visType';
+        this.startStopId = startStopId || 'metronome';
+
+        const metroSoundListener = {
+            setTempo: (t) => visSettings.tempoBpm = t,
+            setStartTime: (t) => visSettings.startTime = t
+        };
+        this.metroSound = new MetronomeSound(soundsPath, sounds, metroSoundListener);
+
+        visSettings.getTime = () => this.metroSound.audioContext.currentTime;
+
+        const soundSelect = $('#' + this.soundSelectId);
+        for (const name of sounds) {
+            const fileExtension = /\..*/;
+            const optionText = name.replace('_', ' ').replace(fileExtension, '');
+            soundSelect.append(`<option>${optionText}</option>`);
+        }
+
+        const visTypeSelect = $('#' + this.visTypeSelectId);
+        visTypeSelect.append('<option>None</option>');
+        visSettings.names.map((visTypeName, index) => {
+            const sel = index === 0 ? ' selected' : '';
+            visTypeSelect.append(`<option${sel}>${visTypeName}</option>`);
+        });
+    }
+
+    /**
+     * Sets the tempo.
+     * @param bpm tempo in beats per minute
+     */
+    setTempo(bpm) {
+        this.metroSound.setTempo(bpm);
+    }
+
+    /**
+     * Sets the metronome sound.
+     * @param number the one-based sound index
+     */
+    setSound(number) {
+        this.metroSound.setSound(number);
+    }
+
+    /**
+     * Sets the visualization type.
+     * @param index a 0-based number specifying the visualization to use
+     */
+    setVisualization(index) {
+        this.visSettings.visualizationType = index;
+    }
+
+    /** Starts the metronome if it is stopped, and vice versa. */
+    toggle() {
+        this.metroSound.toggle();
+        $('#' + this.startStopId).val(this.metroSound.running ? 'Stop' : 'Start')
+    }
+}
+
+const VisSettings = {
+    tempoBpm: 0,
+    startTime: 0,
+    getTime: undefined,
+    visualizationType: 1,
+    names: ['Spinning Circle', 'Circle']
+};
+
+const metronomeApp = new MetronomeApp('assets/audio/',
+    ['High_Woodblock.wav', 'Low_Woodblock.wav', 'High_Bongo.wav',
+        'Low_Bongo.wav', 'Claves.wav', 'Drumsticks.wav'],
+    VisSettings);
+    
+
+   
+
+    /** This p5.js sketch makes a visualization of the metronome beats */
+
+
+
+function setup() {
+    const vis = $("#visualization");
+    createCanvas(vis.width(), vis.height()).parent("visualization");
+    colorMode(HSB);
+}
+
+function draw() {
+    function calcOffsetFraction() {
+        const secondsPerMinute = 60;
+        const periodSeconds = secondsPerMinute / VisSettings.tempoBpm;
+        const secondsSinceStart = VisSettings.getTime() - VisSettings.startTime;
+        const offsetSeconds = secondsSinceStart % periodSeconds;
+        return offsetSeconds / periodSeconds;
+    }
+
+    const offsetFraction = calcOffsetFraction();
+
+    const margin = 40;
+    const radius = min(width, height) / 2;
+    const diameter = radius * 2;
+
+    background(255);
+
+    function drawLargeCircle() {
+        strokeWeight(10);
+        const greenHue = 120;
+        const minimumBrightness = 30;
+        fill(greenHue, 100, map(offsetFraction, 0, 1, 100, minimumBrightness));
+        ellipse(width / 2, height / 2, diameter - margin, diameter - margin);
+    }
+
+    const visualizations = [
+        () => {},
+        () => {
+            function drawSpoke() {
+                translate(width / 2, height / 2);
+                rotate(map(offsetFraction, 0, 1, 0, TWO_PI) - HALF_PI);
+                strokeWeight(8);
+                line(0, 0, radius - margin / 2, 0);
+            }
+
+            function drawSmallCircle() {
+                translate(radius - margin / 2, 0);
+                strokeWeight(3);
+                fill(255);
+                ellipse(0, 0, 30, 30);
+            }
+
+            drawLargeCircle();
+            drawSpoke();
+            drawSmallCircle();
+        },
+        () => drawLargeCircle()
+    ];
+
+    visualizations[(VisSettings.visualizationType)]();
+}
+
+</script>
+
+</body>
+</html>
+

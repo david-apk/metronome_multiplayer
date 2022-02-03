@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href='/static/main.css' />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <div class = "main main-shine">
+            
+
+            <div class="profile-avatar" > </div> 
+            <fieldset class="border-round-form profile-title" >
+                <b >{{ name }} </b><br>немножко информации<br> и еще немножко
+            </fieldset>
+        
+            <br><br>
+        
+        <fieldset class="border-round-form">
+            <p><b>Комнаты:</b></p>
+            <table>
+                <tr>
+                {% for room in rooms %}
+                <td class="room-home-container" >
+                <a href="/room/{{ room.2 }}/{{ name }}" class="room-home-content" ><b>{{ room.2 }}</b> <br> {{ room.4 }}</a>
+                </td>
+                {% endfor %}
+                </tr>
+            </table>
+        </fieldset><br>
+
+            <a class ="normal-str-bot sqere" href="/metron/">Создать комнату</a>
+            <a class ="normal-str-bot sqere"  href="/registration/">Рейтинг</a>
+            <a class ="normal-str-bot sqere"  href="/registration/">Настройки</a><br><br>
+            <a class ="normal-str-bot sqere"  href="/exit/{{ name }}">Выйти</a>
+
+    </div>
+</body>
+</html>

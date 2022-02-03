@@ -1,0 +1,39 @@
+<html>
+<head>
+  <link rel="stylesheet" href='/static/main.css' />
+</head>
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script>
+
+function UpdateInfo(){
+   $.ajax({
+      url: "/login=133" ,
+      type: "POST",
+      dataType: "json",
+      success: function(info){
+        console.log(info["1"])
+      }
+   });
+}
+UpdateInfo();
+</script>
+<div class = "main main-shine">
+  <h2>Заголовок</h2>
+<div class ="info-mes">
+  <h3>Users</h3>
+  <p  >{{ users_list }}</p>
+</div>
+<form method="post">
+  <fieldset class="border-round-form">
+    <p  ><label for="name">Имя&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input class ="input-little" type="text" id="name" name="name"></p>
+    <p   ><label for="password">Пароль &nbsp;</label><input class ="input-little" type="password" id="password" name="password"></p>
+  </fieldset>
+  <p class ="error-mes"  >{{ error_message }}</p><br>
+<p><input class ="green-bot" type="submit" value="Войти"></p>
+<br>
+ <a class ="little-str-bot" href="/reset_password/">Забыли пароль?</a> &nbsp;&nbsp;
+ <a class ="little-str-bot"  href="/registration/">Зарегистрироваться</a>
+</form></div>
+</body>
+</html>
